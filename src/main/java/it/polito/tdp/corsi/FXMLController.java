@@ -5,11 +5,15 @@
 package it.polito.tdp.corsi;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.corsi.model.Corso;
+import it.polito.tdp.corsi.model.Divisione;
 import it.polito.tdp.corsi.model.Model;
+import it.polito.tdp.corsi.model.Studente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -78,15 +82,71 @@ public class FXMLController {
     @FXML
     void numeroStudenti(ActionEvent event) {
     	
+        txtRisultato.clear();
+    	
+    	String periodo = this.txtPeriodo.getText();
+    	int periodoNumerico;
+    	
+    	try {
+    		periodoNumerico = Integer.parseInt(periodo);
+    	} catch(NumberFormatException e){
+    		txtRisultato.setText("Inserisci un valore numerico.");
+    		return;
+    	}
+    	
+    	if(periodoNumerico < 1 || periodoNumerico > 2) {
+    		txtRisultato.setText("Inserisci un valore tra 1 e 2.");
+    		return;
+    	}
+    	
+    	Map<Corso, Integer> iscritti = this.model.getIscritti(periodoNumerico);
+    	
+    	for(Corso c : iscritti.keySet()) {
+    		txtRisultato.appendText(c + " " + iscritti.get(c) + "\n");
+    	}
+    	
     }
 
     @FXML
     void stampaDivisione(ActionEvent event) {
+    	
+    	txtRisultato.clear();
+    	
+    	String codins = this.txtCorso.getText();
+    	
+    	if(codins == null || codins.equals("")) {
+    		txtRisultato.appendText("Inserisci un codice corso");
+    		return;
+    	}
+    	
+    	//CONTROLLA CHE IL CORSO ESISTA
+    	
+    	List<Divisione> divisione = this.model.getDivisioneStudenti(codins);
+    	Collections.sort(divisione);
+    	for(Divisione d : divisione) {
+    		txtRisultato.appendText(d + "\n");
+    	}
 
     }
 
     @FXML
     void stampaStudenti(ActionEvent event) {
+       	
+    	txtRisultato.clear();
+    	
+    	String codins = this.txtCorso.getText();
+    	
+    	if(codins == null || codins.equals("")) {
+    		txtRisultato.appendText("Inserisci un codice corso");
+    		return;
+    	}
+    	
+    	//CONTROLLA CHE IL CORSO ESISTA
+    	
+    	List<Studente> studenti = this.model.getStudentiByCorso(codins);
+    	for(Studente s : studenti) {
+    		txtRisultato.appendText(s + "\n");
+    	}
 
     }
 
